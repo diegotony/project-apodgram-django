@@ -7,6 +7,9 @@ class Author(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['name']
+
 
 class Image(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='images')
@@ -19,8 +22,8 @@ class Image(models.Model):
     version = models.CharField(max_length=10)
     title = models.TextField()
 
-    def __str__(self):
-        return self.title
+    # def __str__(self):
+    #     return self.title
 
     class Meta:
         ordering = ['title']
