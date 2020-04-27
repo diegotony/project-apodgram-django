@@ -1,13 +1,12 @@
 from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
-from apod.views import ImageViewSet, AuthorViewSet, UserViewSet, api_root
+from apod import views
 from rest_framework.routers import DefaultRouter
 from django.conf.urls import include
 
 router = DefaultRouter()
-router.register(r'authors', AuthorViewSet)
-router.register(r'images', ImageViewSet)
-router.register(r'users', UserViewSet)
+router.register(r'authors', views.AuthorViewSet)
+router.register(r'images', views.ImageViewSet)
+# router.register(r'users', UserViewSet)
 
 # author_list = AuthorViewSet.as_view({
 #     'get': 'list',
@@ -53,6 +52,7 @@ urlpatterns = [
     # path('', api_root),
     # path('api-auth/', include('rest_framework.urls')),
     path('', include(router.urls)),
+    path('extract/', views.extract),
 ]
 
 # urlpatterns = format_suffix_patterns(urlpatterns)

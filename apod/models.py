@@ -13,7 +13,7 @@ class Author(models.Model):
 
 class Image(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='images')
-    owner = models.ForeignKey('auth.User', related_name='images', on_delete=models.CASCADE)
+    # owner = models.ForeignKey('auth.User', related_name='images', on_delete=models.CASCADE)
     date_photo = models.DateTimeField()
     data_save = models.DateTimeField(auto_now=True)
     explanation = models.TextField()
@@ -23,8 +23,8 @@ class Image(models.Model):
     version = models.CharField(max_length=10)
     title = models.TextField()
 
-    # def __str__(self):
-    #     return self.title
+    def __str__(self):
+        return self.title
 
     class Meta:
         ordering = ['title']
