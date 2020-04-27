@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import environ
+
 # import django_heroku
 
 # django_heroku.settings(locals())
@@ -135,17 +135,11 @@ USE_L10N = True
 
 USE_TZ = True
 
-PROJECT_ROOT= os.path.join(os.path.abspath(__file__))
-STATIC_ROOT= os.path.join(PROJECT_ROOT, 'staticfiles')
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
-)
 
 
