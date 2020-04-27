@@ -1,1 +1,1 @@
-web: gunicorn apodgram.wsgi
+web: gunicorn apodgram.wsgi:application --log-file -
