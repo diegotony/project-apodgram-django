@@ -7,9 +7,13 @@ class Author(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['name']
+
 
 class Image(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='images')
+    owner = models.ForeignKey('auth.User', related_name='images', on_delete=models.CASCADE)
     date_photo = models.DateTimeField()
     data_save = models.DateTimeField(auto_now=True)
     explanation = models.TextField()
