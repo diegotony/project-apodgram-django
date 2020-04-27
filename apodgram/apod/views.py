@@ -1,84 +1,74 @@
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework import generics
+from rest_framework import permissions, renderers
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
+from rest_framework import viewsets
 from apod.models import Author, Image
-from apod.serializers import AuthorSerializer, ImageSerializer
+from django.contrib.auth.models import User
+from apod.serializers import AuthorSerializer, ImageSerializer, UserSerializer
 
 
-@api_view(['GET', 'POST'])
-def author_list(request, format=None):
-    if request.method == 'GET':
-        authors = Author.objects.all()
-        serializer = AuthorSerializer(authors, many=True)
-        return Response(serializer.data)
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'users': reverse('user-list', request=request, format=format),
+        'images': reverse('image-list', request=request, format=format),
+        'authors': reverse('author-list', request=request, format=format),
 
-    elif request.method == 'POST':
-        serializer = AuthorSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    })
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def author_detail(request, pk, format=None):
-    try:
-        author = Author.objects.get(pk=pk)
-    except Author.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        serializer = AuthorSerializer(author)
-        return Response(serializer.data)
-
-    if request.method == 'PUT':
-        serializer = AuthorSerializer(author, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    if request.method == 'DELETE':
-        author.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class AuthorViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
 
 
-
-@api_view(['GET', 'POST'])
-def image_list(request, format=None):
-    if request.method == 'GET':
-        images = Image.objects.all()
-        serializer = ImageSerializer(images, many=True)
-        return Response(serializer.data)
-
-    elif request.method == 'POST':
-        serializer = ImageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# class AuthorList(generics.ListCreateAPIView):
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+#     queryset = Author.objects.all()
+#     serializer_class = AuthorSerializer
+#
+#
+# class AuthorDetail(generics.ListCreateAPIView):
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+#     queryset = Author.objects.all()
+#     serializer_class = AuthorSerializer
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def image_detail(request, pk, format=None):
-    try:
-        image = Image.objects.get(pk=pk)
-    except Image.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    if request.method == 'GET':
-        serializer = ImageSerializer(image)
-        return Response(serializer.data)
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
-    if request.method == 'PUT':
-        serializer = ImageSerializer(image, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# class ImageList(generics.ListCreateAPIView):
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+#     queryset = Image.objects.all()
+#     serializer_class = ImageSerializer
+#
+#     def perform_create(self, serializer):
+#         serializer.save(owner=self.request.user)
+#
+#
+# class ImageDetail(generics.ListCreateAPIView):
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+#     queryset = Image.objects.all()
+#     serializer_class = ImageSerializer
 
-    if request.method == 'DELETE':
-        image.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+# class UserList(generics.ListCreateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#
+#
+# class UserDetail(generics.ListCreateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
