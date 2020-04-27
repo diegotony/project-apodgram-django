@@ -23,8 +23,8 @@ class Image(models.Model):
     version = models.CharField(max_length=10)
     title = models.TextField()
 
-    def __str__(self):
-        return self.title
+    # def __str__(self):
+    #     return self.title
 
     class Meta:
         ordering = ['title']
