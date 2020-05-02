@@ -1,0 +1,8 @@
+export NAME_DB=db5l75tsnifp0u
+export USER_DB=ivtkgylmlybfwi
+export PASSWORD_DB=991d47b887f236c1d02cdc4cc874aa9fc1daf612b7b44984bbb68d032fc831ee
+export HOST_DB=ec2-52-7-39-178.compute-1.amazonaws.com
+export PORT_DB=5432
+export API_URL=https://api.nasa.gov/planetary/apod?
+export API_KEY=2HE4Z7g1W0v1b1ngtohShvf7pq2ja3pBP2RSm9mt
+export API_COUNT=80
