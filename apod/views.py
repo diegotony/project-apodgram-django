@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from apod.models import Author, Image
+from django.shortcuts import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from apod.serializers import AuthorSerializer, ImageSerializer
 import requests
@@ -27,9 +28,9 @@ def extract(request, format=None):
                 for i in data:
                     date_format = datetime.datetime.strptime(i['date'], '%Y-%m-%d')
                     if 'copyright' not in i.keys():
+                        
                         image = i
                         image['copyright'] = 1
-
                         image['date'] = date_format
                         serializer = ImageSerializer(data=image)
 
@@ -57,7 +58,6 @@ def extract(request, format=None):
                             else:
                                 print(serializer.errors)
 
-                        pass
                         author_serializer = AuthorSerializer(data=author)
 
                 return Response(data, status=status.HTTP_200_OK)
@@ -69,10 +69,27 @@ def extract(request, format=None):
         return Response({'status': False, 'msg': 'Method not allowed'}, status=status.HTTP_404_NOT_FOUND)
 
 
+@api_view(['GET'])
+def like(request, id):
+    if request.method == 'GET':
+        image = get_object_or_404(Image, pk=id)
+        print(image)
+        data = {"like": image.like + int(1)}
+        serializer = ImageSerializer(image,data=data,partial = True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'status':True, 'data':serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
 class ImageResultSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 5000
+
+    
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -84,3 +101,4 @@ class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     pagination_class = ImageResultSetPagination
+    
