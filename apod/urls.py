@@ -11,4 +11,6 @@ router.register(r'images', views.ImageViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('extract/', views.extract , name="extract-apod-data"),
+    path('like/<int:id>/', views.like , name="like-image"),
+
 ]
