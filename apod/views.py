@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from apod.models import Author, Image
+from rest_framework.pagination import PageNumberPagination
 from apod.serializers import AuthorSerializer, ImageSerializer
 import requests
 import os
@@ -68,57 +69,18 @@ def extract(request, format=None):
         return Response({'status': False, 'msg': 'Method not allowed'}, status=status.HTTP_404_NOT_FOUND)
 
 
+class ImageResultSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 5000
+
+
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
-# class AuthorList(generics.ListCreateAPIView):
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-#     queryset = Author.objects.all()
-#     serializer_class = AuthorSerializer
-#
-#
-# class AuthorDetail(generics.ListCreateAPIView):
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-#     queryset = Author.objects.all()
-#     serializer_class = AuthorSerializer
 
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    # def perform_create(self, serializer):
-    #     serializer.save(owner=self.request.user)
-
-# class ImageList(generics.ListCreateAPIView):
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-#     queryset = Image.objects.all()
-#     serializer_class = ImageSerializer
-#
-#     def perform_create(self, serializer):
-#         serializer.save(owner=self.request.user)
-#
-#
-# class ImageDetail(generics.ListCreateAPIView):
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-#     queryset = Image.objects.all()
-#     serializer_class = ImageSerializer
-
-
-# class UserViewSet(viewsets.ReadOnlyModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-
-
-# class UserList(generics.ListCreateAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#
-#
-# class UserDetail(generics.ListCreateAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
+    pagination_class = ImageResultSetPagination
