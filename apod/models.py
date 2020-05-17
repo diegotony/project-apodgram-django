@@ -22,6 +22,7 @@ class Image(models.Model):
     media_type = models.TextField()
     service_version = models.CharField(max_length=10)
     title = models.TextField()
+    like = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
